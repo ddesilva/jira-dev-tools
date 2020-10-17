@@ -4,7 +4,8 @@ module.exports = {
     commonjs: true,
     es6: true,
     node: true,
-    jest: true
+    jest: true,
+    webextensions: true
   },
   extends: 'eslint:recommended',
   parser: 'babel-eslint',

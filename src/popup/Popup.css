@@ -1,55 +1,153 @@
 .popup {
   text-align: center;
-  width: 800px;
+  width: 700px;
+  height:489px;
 }
 
-.popup-greet {
-  color: #80FFAB;
+.header {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-evenly;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.title{
+  font-weight:bold;
+  text-transform:uppercase;
+}
+
+.title-icon {
+  color: rgb(0, 82, 204);
+}
+
+.title-icon iron-icon {
+  margin-top: -4px;
+}
+
+.center {
+  font-size: 2em;
+  flex:.4;
+}
+
+.left{
+  flex:.4;
+  text-align: left;
+  font-size: 20px;
+  padding-left:15px;
   justify-content: center;
-  font-size: 2em;
-  font-style: italic;
-  letter-spacing: 0.1em;
-  font-family: "Noto Sans", sans-serif;
-  margin-top: 2em;
-  padding: 0 0.8em 0.1em 0.8em;
+
 }
 
-.brand {
-  font-family: 'Roboto Mono', monospace;
-  letter-spacing: 0em;
-  font-style: normal;
-  font-weight: 600;
+.left span{
+  padding-left:5px;
 }
 
-.stack-head {
-  color: #ffffff;
-  font-family: 'Roboto Mono', monospace;
-  /* font-weight: 700; */
-  font-size: 2em;
+.right {
+  flex:.4;
+  text-align: right;
+  padding-right:10px;
+  color: rgb(0, 82, 204);
 }
 
-.tech-logos {
-  padding: 0 2em 2em 2em;
+.popup-input-jira-ticket {
+  width:150px;
+  margin:5px 0px 0px 15px;
+  padding:5px;
+  border-radius:3px;
+  border:1px solid #d0d0d0;
+  box-shadow: none;
+  font-size: 15px;
 }
 
-.logo {
-  height: 40px;
-  padding-right: 1.8em;
+.popup-input {
+  width:660px;
+  margin:0px 0px 5px 0px;
+  padding:5px;
+  border-radius:3px;
+  border:1px solid #d0d0d0;
+  box-shadow: none;
+  font-size: 15px;
 }
 
-.contrib-msg {
-  color: #ffffff;
-  font-family: 'Roboto Mono', monospace;
-  /* font-weight: 700; */
-  font-size: 1.5em;
-  margin: 2em 2em 3em 2em;
+.popup-label {
+  display:block;
+  width:660px;
+  padding:5px;
+  box-shadow: none;
+  font-size: 15px;
+  text-align:left;
+  margin-left:12px;
+  margin-top:5px;
 }
 
-.contrib-msg a {
-  color: #0055ff;
-  font-weight: bold;
+
+paper-button.save { background: rgb(0, 82, 204); color: white; font-size:15px; margin-top: -5px;}
+paper-button.save-disabled { background: #e1e1e1; color: white; font-size:15px; margin-top: -5px;}
+
+paper-button.plain { background: white; color: rgb(0, 82, 204); border:1px solid rgb(0, 82, 204); font-size:15px; margin-top: -5px;}
+paper-button.plain-disabled { background: white; color: #e1e1e1; border:1px solid #e1e1e1; font-size:15px; margin-top: -5px;}
+
+paper-button.settings {
+  color: rgb(0, 82, 204);
+  padding: 0;
+  min-width: 2em;
 }
 
+.saved-items-title{
+  text-align: left;
+
+  margin-left:15px;
+  margin-bottom:5px;
+}
+
+.saved-items-container{
+  color:rgb(0, 82, 204);
+  justify-content: center;
+}
+
+.saved-item {
+  position: relative;
+  display:flex;
+  flex-direction:row;
+  justify-content: stretch;
+  padding:10px 10px 10px 15px;
+  cursor:pointer;
+  align-items: center;
+}
+
+.saved-item:hover, .saved-item:active {
+  background:#e9f4f9;
+}
+
+.saved-items-jiraNumber{
+  flex: .2;
+  text-align:left;
+}
+
+.saved-items-jiraTitle{
+  flex: .7;
+  text-align:left;
+}
+
+.saved-items-actions{
+  flex: .2;
+  text-align:right;
+}
+
+.saved-items-open {
+  border:1px solid rgb(0, 82, 204);
+  border-radius: 3px;
+  color: rgb(0, 82, 204);
+  cursor:pointer;
+  background:white;
+}
+
+.saved-items-delete {
+  border:none;
+  border-radius: 3px;
+  color: red;
+  cursor:pointer;
+  background:none;
+}
