@@ -6,6 +6,8 @@ import '@polymer/iron-icon/iron-icon.js';
 
 class Popup extends Component {
 
+  // TODO: init state with sensible defaults on first run
+
   constructor(props) {
     super(props);
 
@@ -17,8 +19,14 @@ class Popup extends Component {
         jiraTitle: '',
         gitPush: '',
         canary: '',
+        canaryCookie: '',
+        cookieName:'',
       },
+      selectedCookieName: '',
+      numberOfCanaryChar: 50,
+      canaryNames: [],
       invalid: true,
+      enableGitPush: false,
       savedItems: []
     };
   }
@@ -53,22 +61,27 @@ class Popup extends Component {
     return title;
   };
 
-  // TODO: add to options
-  getCanary = (jiraNumber, title) => {
-
+  getCanaryLine = (jiraNumber, title) => {
     const prefix = `feature-${jiraNumber.toLowerCase()}-`;
     const updatedTitle = title.replace(prefix, '');
+    const {numberOfCanaryChar} = this.state;
+    return prefix + updatedTitle.replace(/\s/g, '-').toLowerCase().replace('/', '-').substring(0, updatedTitle.length > numberOfCanaryChar ? updatedTitle.charAt(numberOfCanaryChar-1) == '-' ? numberOfCanaryChar-1 : numberOfCanaryChar : updatedTitle.length);
+  };
 
-    const canary = prefix + updatedTitle.replace(/\s/g, '-').toLowerCase().replace('/', '-').substring(0, updatedTitle.length > 50 ? updatedTitle.charAt(49) == '-' ? 49 : 50 : updatedTitle.length);
-    return canary;
+  getCanary = (jiraNumber, title) => {
+    return this.getCanaryLine(jiraNumber, title);
+  };
+
+  getCanaryCookie = (jiraNumber, title, canaryName) => {
+    const canary = this.getCanaryLine(jiraNumber, title);
+    return `document.cookie="${canaryName}=${canary};path=/"`;
   };
 
   restoreOptions = () => {
 
-    chrome.storage.sync.get('savedItems', data => {
+    chrome.storage.sync.get(['savedItems', 'canaryNames', 'enableGitPush', 'enableCanary'], data => {
       if(data.savedItems) {
-        this.setState({savedItems: data.savedItems});
-        console.log(data.savedItems);
+        this.setState({savedItems: data.savedItems, canaryNames: data.canaryNames, enableGitPush: data.enableGitPush, enableCanary: data.enableCanary});
       }
     });
 
@@ -122,18 +135,40 @@ class Popup extends Component {
 
   updateTitle = (e) => {
     const currentItem = this.state.currentItem;
+    const selectedCookieName = this.state.selectedCookieName;
+
     currentItem.jiraTitle = e.target.value;
     currentItem.newBranchLine = this.getBranchLine(currentItem.jiraNumber, e.target.value);
     currentItem.gitPush = this.getGitPushLine(currentItem.jiraNumber, e.target.value);
     currentItem.canary = this.getCanary(currentItem.jiraNumber, e.target.value);
-
+    currentItem.canaryCookie = this.getCanaryCookie(currentItem.jiraNumber, e.target.value, selectedCookieName);
     this.setState({currentItem});
   };
 
   updateCanary = (e) => {
     const currentItem = this.state.currentItem;
+    const selectedCookieName = this.state.selectedCookieName;
     currentItem.canary = e.target.value;
+
+    currentItem.canaryCookie = this.getCanaryCookie(currentItem.jiraNumber, e.target.value, selectedCookieName);
     this.setState({currentItem});
+  };
+
+  updateCookieName = (e) => {
+    const selectedCookieName = e.target.value;
+
+    const currentItem = this.state.currentItem;
+    currentItem.canaryName = e.target.value;
+    currentItem.canaryCookie = this.getCanaryCookie(currentItem.jiraNumber, currentItem.canary, selectedCookieName);
+    this.setState({currentItem, selectedCookieName});
+    this.forceRepaint();
+  };
+
+  forceRepaint = () => {
+    const root = document.querySelector('#root');
+    root.style.display='none';
+    root.offsetHeight;
+    root.style.display='block';
   };
 
   openOptions = () => {
@@ -194,20 +229,23 @@ class Popup extends Component {
 
       chrome.storage.sync.set({ savedItems: updatedArray });
     }
-  }
+  };
+
 
   render() {
-    const {savedItems, currentItem, invalid} = this.state;
-    const {jiraNumber, newBranchLine, jiraTitle, gitPush, canary} = currentItem;
+    const {savedItems, currentItem, invalid, canaryNames, enableGitPush, enableCanary} = this.state;
+    const {jiraNumber, newBranchLine, jiraTitle, gitPush, canary, canaryCookie} = currentItem;
+
+    console.log(currentItem);
 
     return (
       <div className="popup">
         <div className="header">
           <div className="left">
             <span className={'title-icon'}>
-              <iron-icon icon="chrome-reader-mode"></iron-icon>
+              <iron-icon icon="pets"></iron-icon>
             </span>
-            <span className={'title'}>Jira Dev Tools</span>
+            <span className={'title'}>Snow dog</span>
           </div>
           <div className={'center'}>
             <input className={'popup-input-jira-ticket'} type="text" value={jiraNumber} onClick={this.selectAll} />
@@ -224,12 +262,31 @@ class Popup extends Component {
           <input className={'popup-input'} type="text" value={jiraTitle} onChange={this.updateTitle} />
           <label className={'popup-label'}>Git checkout command</label>
           <input className={'popup-input'} type="text" value={newBranchLine} onChange={this.updateNewBranch} onClick={this.selectAll}/>
-          <label className={'popup-label'}>Git push command</label>
-          <input className={'popup-input'} type="text" value={gitPush} onClick={this.selectAll}/>
 
-          <label className={'popup-label'}>Canary Build</label>
-          <input className={'popup-input'} type="text" value={canary} onChange={this.updateCanary} />
+          {enableGitPush && (
+            <>
+            <label className={'popup-label'}>Git push command</label>
+            <input className={'popup-input'} type="text" value={gitPush} onClick={this.selectAll}/>
+            </>
+          )}
 
+          {enableCanary && (
+            <>
+              <label className={'popup-label'}>Canary Build</label>
+              <input className={'popup-input'} type="text" value={canary} onChange={this.updateCanary} />
+
+              <div className={'canary-cookie-title-wrapper'}>
+                <label className={'popup-label'}>Canary cookie</label>
+                <select name="cookieNames" onChange={e => this.updateCookieName(e)}>
+                  <option value="">Choose Cookie name...</option>
+                  {canaryNames.map(canaryName =>
+                    <option value={canaryName.name} selected={currentItem.canaryName === canaryName.name}>{canaryName.name}</option>
+                  )}
+                </select>
+              </div>
+              <input className={'popup-input'} type="text" value={canaryCookie} onClick={this.selectAll}/>
+            </>
+          )}
 
           <br />
           <br />
@@ -248,13 +305,12 @@ class Popup extends Component {
             </div>
           )}
 
-          <br />
           <div className={'saved-items-title'}>Saved Tickets</div>
           <div className={'saved-items-container'}>
             {
               savedItems.map(item => {
                 return (
-                  <div className={'saved-item'} onClick={() => this.loadItem(item)}>
+                  <div className={item.index === currentItem.index ? 'saved-item-selected' : 'saved-item'} onClick={() => this.loadItem(item)}>
                     <span className={'saved-items-jiraNumber'}>{item.jiraNumber}</span>
                     <span className={'saved-items-jiraTitle'}>{item.jiraTitle}</span>
                     <span className={'saved-items-actions'}>

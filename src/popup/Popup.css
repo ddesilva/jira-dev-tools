@@ -1,7 +1,7 @@
 .popup {
   text-align: center;
   width: 700px;
-  height:489px;
+  height:600px;
 }
 
 .header {
@@ -117,8 +117,20 @@ paper-button.settings {
   align-items: center;
 }
 
-.saved-item:hover, .saved-item:active {
+.saved-item-selected {
+  position: relative;
+  display:flex;
+  flex-direction:row;
+  justify-content: stretch;
+  padding:10px 10px 10px 15px;
+  cursor:pointer;
+  align-items: center;
   background:#e9f4f9;
+}
+
+
+.saved-item:hover, .saved-item:active {
+  background:#f8fdff;
 }
 
 .saved-items-jiraNumber{
@@ -150,4 +162,20 @@ paper-button.settings {
   color: red;
   cursor:pointer;
   background:none;
+}
+
+.canary-cookie-title-wrapper{
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: baseline;
+}
+
+.canary-cookie-title-wrapper label {
+  width:auto;
+}
+
+.canary-cookie-title-wrapper select {
+  height:20px;
+  font-size:14px;
 }
