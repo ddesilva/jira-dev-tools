@@ -69,7 +69,7 @@ class Popup extends Component {
   };
 
   getJiraTitleLine = (title) => {
-    title = title.toLowerCase().replace(/\s/g, '-');
+    title = title.toLowerCase().replace(/\s/g, '-').replace(',', '').replace('.', '');
     title = title.replace('---','-');
     return title;
   };
@@ -79,7 +79,7 @@ class Popup extends Component {
     const updatedTitle = title.replace(prefix, '');
     const {numberOfCanaryChar} = this.state;
     const fullCanary = prefix + updatedTitle;
-    return fullCanary.replace(/\s/g, '-').toLowerCase().replace('/', '-').substring(0, fullCanary.length > numberOfCanaryChar ? fullCanary.charAt(numberOfCanaryChar) == '-' ? numberOfCanaryChar : numberOfCanaryChar -1`` : fullCanary.length);
+    return fullCanary.substring(0, fullCanary.length > numberOfCanaryChar ? fullCanary.charAt(numberOfCanaryChar) !== '-' ? numberOfCanaryChar : numberOfCanaryChar -1 : fullCanary.length);
   };
 
   getCanary = (jiraNumber, title) => {
@@ -124,9 +124,13 @@ class Popup extends Component {
 
 
         const jiraNumber = popupJiraNumber || fullPageJiraNumber;
-        const canary = this.getCanary(jiraNumber, result[0]);
+
+        const canary = this.getCanary(jiraNumber, jiraTitle);
+
         const newBranchLine = this.getBranchLine(jiraNumber, jiraTitle);
         const gitPush = this.getGitPushLine(jiraNumber, jiraTitle);
+
+        console.log('jiraNumber', jiraNumber, popupJiraNumber, fullPageJiraNumber);
 
         if(jiraNumber) {
           this.setState({currentItem: {currentUrl, jiraNumber, newBranchLine, jiraTitle , gitPush, canary}, invalid: false});
@@ -251,8 +255,6 @@ class Popup extends Component {
     const {savedItems, currentItem, invalid, canaryNames, enableGitPush, enableCanary} = this.state;
     const {jiraNumber, newBranchLine, jiraTitle, gitPush, canary, canaryCookie} = currentItem;
 
-    console.log(currentItem);
-
     return (
       <div className="popup">
         <div className="header">
@@ -273,7 +275,7 @@ class Popup extends Component {
         </div>
 
         <div>
-          <label className={'popup-label'}>Jira Ticket Title (editable)</label>
+          <label className={'popup-label'}>Git Branch name (editable)</label>
           <input className={'popup-input'} type="text" value={jiraTitle} onChange={this.updateTitle} />
           <label className={'popup-label'}>Git checkout command</label>
           <input className={'popup-input'} type="text" value={newBranchLine} onChange={this.updateNewBranch} onClick={this.selectAll}/>
