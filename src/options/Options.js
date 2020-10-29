@@ -9,11 +9,7 @@ class Options extends Component {
     super(props);
 
     this.state = {
-      numberOfCanaryChar: 50,
       canaryName: '',
-      enableGitPush: true,
-      enableCanary: false,
-      canaryNames: []
     };
   }
 
@@ -59,7 +55,7 @@ class Options extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          Jira Dev Tools - Options
+          Snow Dog - Options
         </header>
         <div className={'container'}>
 
@@ -81,7 +77,7 @@ class Options extends Component {
             <div className={'form-row'}>
               Canary Cookie names:
               <div className={'canary-names-wrapper'}>
-                { canaryNames.map(canaryName => {
+                { canaryNames && canaryNames.map(canaryName => {
                   return (
                     <div className="canary-item">
                       <div className="canary-item-name">{canaryName.name} </div>

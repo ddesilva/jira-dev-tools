@@ -1,8 +1,8 @@
 {
-  "version": "1.0",
+  "version": "0.0.1",
   "manifest_version": 2,
-  "name": "Jira Dev Tools",
-  "description": "Streamline your developer experience and save time",
+  "name": "Snow Dog",
+  "description": "Jira + Git helper to streamline your DX",
   "content_scripts": [
     {
       "matches": [

@@ -26,10 +26,23 @@ class Popup extends Component {
       numberOfCanaryChar: 50,
       canaryNames: [],
       invalid: true,
-      enableGitPush: false,
+      enableGitPush: true,
+      enableCanary: false,
       savedItems: []
     };
+
+    this.initSettings();
   }
+
+  initSettings = () => {
+    const {canaryNames, numberOfCanaryChar, enableGitPush, enableCanary} = this.state;
+
+    chrome.storage.sync.get(['canaryNames', 'enableGitPush', 'enableCanary', 'numberOfCanaryChar', 'initialised'], data => {
+      if(!data.initialised) {
+        chrome.storage.sync.set({canaryNames, numberOfCanaryChar, enableGitPush, enableCanary, initialised: true });
+      }
+    });
+  };
 
   componentWillMount() {
     document.addEventListener('DOMContentLoaded', this.restoreOptions);
@@ -65,7 +78,8 @@ class Popup extends Component {
     const prefix = `feature-${jiraNumber.toLowerCase()}-`;
     const updatedTitle = title.replace(prefix, '');
     const {numberOfCanaryChar} = this.state;
-    return prefix + updatedTitle.replace(/\s/g, '-').toLowerCase().replace('/', '-').substring(0, updatedTitle.length > numberOfCanaryChar ? updatedTitle.charAt(numberOfCanaryChar-1) == '-' ? numberOfCanaryChar-1 : numberOfCanaryChar : updatedTitle.length);
+    const fullCanary = prefix + updatedTitle;
+    return fullCanary.replace(/\s/g, '-').toLowerCase().replace('/', '-').substring(0, fullCanary.length > numberOfCanaryChar ? fullCanary.charAt(numberOfCanaryChar) == '-' ? numberOfCanaryChar : numberOfCanaryChar -1`` : fullCanary.length);
   };
 
   getCanary = (jiraNumber, title) => {
@@ -79,10 +93,11 @@ class Popup extends Component {
 
   restoreOptions = () => {
 
-    chrome.storage.sync.get(['savedItems', 'canaryNames', 'enableGitPush', 'enableCanary'], data => {
+    chrome.storage.sync.get(['savedItems', 'canaryNames', 'enableGitPush', 'enableCanary', 'numberOfCanaryChar'], data => {
       if(data.savedItems) {
-        this.setState({savedItems: data.savedItems, canaryNames: data.canaryNames, enableGitPush: data.enableGitPush, enableCanary: data.enableCanary});
+        this.setState({savedItems: data.savedItems});
       }
+      this.setState({canaryNames: data.canaryNames, enableGitPush: data.enableGitPush, enableCanary: data.enableCanary, numberOfCanaryChar: data.numberOfCanaryChar});
     });
 
     const scriptToRun = `(${this.getTitle})()`;
