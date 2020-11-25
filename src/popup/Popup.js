@@ -71,6 +71,9 @@ class Popup extends Component {
   getJiraTitleLine = (title) => {
     title = title.toLowerCase().replace(/\s/g, '-').replace(',', '').replace('.', '');
     title = title.replace('---','-');
+    title = title.replace('/','');
+    title = title.replace('(','');
+    title = title.replace(')','');
     return title;
   };
 
@@ -87,6 +90,9 @@ class Popup extends Component {
   };
 
   getCanaryCookie = (jiraNumber, title, canaryName) => {
+    if(!canaryName) {
+      return '';
+    }
     const canary = this.getCanaryLine(jiraNumber, title);
     return `document.cookie="${canaryName}=${canary};path=/"`;
   };
@@ -212,7 +218,8 @@ class Popup extends Component {
         }
       }, []);
     } else {
-      savedItems.unshift({...this.state.currentItem, index: savedItems.length+1});
+      // TODO: rename index to key or ID
+      savedItems.unshift({...this.state.currentItem, index: currentItem.jiraNumber + Math.floor((Math.random()*100))});
     }
 
     this.setState({savedItems});

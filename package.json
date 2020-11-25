@@ -1,6 +1,6 @@
 {
   "name": "snow-dog",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Jira + Git Helper",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
